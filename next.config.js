@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* next.config.js  */
 module.exports = {
   i18n: {

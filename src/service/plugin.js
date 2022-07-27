@@ -20,41 +20,18 @@ export const convertTimeOf = (obj) => {
 export const toList = (snapshot) =>
   snapshot.docs.map((d) => convertTimeOf({ id: d.id, ...d.data() }));
 
-const fileContent = (condition) => {
-  switch (condition) {
-    case 'application/pdf':
-      return {
-        metadata: 'application/pdf',
-        replace: /^data:application\/\w+;base64,/,
-      };
-    case 'image/jpeg':
-      return {
-        metadata: 'image/jpeg',
-        replace: /^data:image\/\w+;base64,/,
-      };
-    case 'image/png':
-      return {
-        metadata: 'image/png',
-        replace: /^data:image\/\w+;base64,/,
-      };
-    default:
-      return null;
-  }
-};
-
-export const uploadFile = (file, fileName, fileType, filePath) => {
-  const { metadata, replace } = fileContent(fileType);
+export const uploadFile = async (file, fileName, fileType, filePath) => {
   const uuidv4 = uuid();
   const bufferStream = new Stream.PassThrough();
-  const base64EncodedImageString = file.replace(replace, '');
+  const base64EncodedImageString = file.split(',')[1];
   bufferStream.end(new Buffer.from(base64EncodedImageString, 'base64'));
 
   const files = storage.file(`${filePath}/${fileName}`);
-  bufferStream
+  await bufferStream
     .pipe(
       files.createWriteStream({
         metadata: {
-          contentType: metadata,
+          contentType: fileType,
           metadata: {
             firebaseStorageDownloadTokens: uuidv4,
           },
@@ -70,10 +47,14 @@ export const uploadFile = (file, fileName, fileType, filePath) => {
       return 'Feeds Added Successfully';
     });
 
-  return files
-    .getSignedUrl({
-      action: 'read',
-      expires: '03-09-2491',
-    })
-    .then((signedUrls) => signedUrls[0]);
+  return `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${encodeURIComponent(
+    `${filePath}/${fileName}`
+  )}?alt=media&token=${uuidv4}`;
+
+  // return files
+  //   .getSignedUrl({
+  //     action: 'read',
+  //     expires: '03-09-2491',
+  //   })
+  //   .then((signedUrls) => signedUrls[0]);
 };

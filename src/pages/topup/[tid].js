@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import * as imageConversion from 'image-conversion';
 import { Layout, Typography } from '../../components';
 import { paymentDiamonds } from '../../constants/mock';
 import { asCaption } from '../../utilities/format';
@@ -19,21 +21,8 @@ const SectionPart = ({ children, index, title }) => (
   </Layout.Section>
 );
 
-// const SectionRightPart = ({ children, index, title }) => (
-//   <Layout.Section className='pt-5'>
-//     <div className='w-full pt-5 rounded-lg relative'>
-//       <div className='absolute -top-5 right-0 rounded-full bg-white w-14 h-14 border-8 border-main-2 flex justify-center items-center pb-1'>
-//         <Typography.Title level={2} className='text-main-2'>
-//           {index}
-//         </Typography.Title>
-//       </div>
-//       <Typography.Title level={2}>{title}</Typography.Title>
-//       {children}
-//     </div>
-//   </Layout.Section>
-// );
-
 export default function Tid({ title }) {
+  const router = useRouter();
   const [dataSource] = useState(paymentDiamonds);
   const [selectOption, setSelectOption] = useState(paymentDiamonds[0]);
   const [inputData, setInputData] = useState({
@@ -53,16 +42,17 @@ export default function Tid({ title }) {
     }));
   };
 
-  const onHandleChangeFile = (e) => {
+  const onHandleChangeFile = async (e) => {
     const { files } = e.target;
+    const newFile = await imageConversion.compressAccurately(files[0], 150);
     const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onload = async (event) => {
+    await reader.readAsDataURL(newFile);
+    reader.onload = async () => {
       setInputData((el) => ({
         ...el,
         filename: files[0].name,
         fileType: files[0].type,
-        file: event.target.result,
+        file: reader.result,
       }));
     };
   };
@@ -90,16 +80,20 @@ export default function Tid({ title }) {
       // eslint-disable-next-line no-alert
       alert('Please fill input!');
     } else {
-      await axios({
+      const res = await axios({
         method: 'POST',
         url: '/api/telegram/send/sendMessage',
         data: {
           filename: inputData.filename,
           fileType: inputData.fileType,
-          file: '',
+          file: inputData.file,
           caption,
         },
       });
+
+      if (res.data.status === 'ok') {
+        router.reload();
+      }
     }
   };
 
@@ -219,12 +213,12 @@ export default function Tid({ title }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { tid } = context.query;
-  return {
-    props: {
-      tid,
-      title: 'Mobile Legend',
-    }, // will be passed to the page component as props
-  };
-}
+// export async function getServerSideProps(context) {
+//   const { tid } = context.query;
+//   return {
+//     props: {
+//       tid,
+//       title: 'Mobile Legend',
+//     }, // will be passed to the page component as props
+//   };
+// }
