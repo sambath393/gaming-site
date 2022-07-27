@@ -20,6 +20,8 @@ body {
     Helvetica Neue,
     sans-serif;
   height: 100%;
+  background-color: black;
+  color: #fff;
 }
 
 div#__next {

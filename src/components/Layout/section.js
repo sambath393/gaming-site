@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SectionDefualt = ({ children, defualtStyles, className }) => {
+const SectionDefualt = ({ children, defualtStyles = '', className = '' }) => {
   return <section className={`${defualtStyles} ${className}`}>{children}</section>;
 };
 

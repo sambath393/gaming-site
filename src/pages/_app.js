@@ -2,8 +2,11 @@ import React from 'react';
 import { RecoilRoot } from 'recoil';
 import '../utilities/i18n';
 import '../styles/globals.css';
-import { Main } from '../components';
-import { seoDefualt } from '../constants';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { MainLayout } from '../layout/Main';
+// import { Main } from '../components';
+// import { seoDefualt } from '../constants';
 
 const config = {
   enableRecoil: false,
@@ -14,8 +17,10 @@ function MyApp({ Component, pageProps }) {
 
   let appElem = (
     <Layout>
-      <Main.HeadNextSeo dataSource={pageProps?.seo || seoDefualt} />
-      <Component {...pageProps} />
+      {/* <Main.HeadNextSeo dataSource={pageProps?.seo || seoDefualt} /> */}
+      <MainLayout>
+        <Component {...pageProps} />
+      </MainLayout>
     </Layout>
   );
 

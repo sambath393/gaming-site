@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Main } from '../components';
+import { Layout, Main } from '../components';
 
 export const MainLayout = ({ children }) => {
   // State
@@ -16,8 +16,9 @@ export const MainLayout = ({ children }) => {
   }, []);
 
   return (
-    <div className='w-full relative bg-black'>
+    <div className='w-full min-h-screen relative bg-black'>
       <Main.ScrollToTop scrollBtn={scrollBtn} />
+      <Layout.Navbar />
       <div>{children}</div>
     </div>
   );

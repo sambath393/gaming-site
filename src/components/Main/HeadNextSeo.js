@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { FAQPageJsonLd, NextSeo } from 'next-seo';
 import { getDomain } from '../../utilities/dev';
 import GATag from './GATag';
-import { fetchImage } from '../../service/strapi';
+// import { fetchImage } from '../../service/strapi';
 import { asFaq } from '../../utilities/format';
 import { faqDefault } from '../../constants/seoData';
 
@@ -46,7 +46,7 @@ export default function HeadNextSeo({ dataSource }) {
             : 'A short description goes here.',
           images:
             seo?.images?.length > 0
-              ? seo?.images?.map((load) => ({ url: fetchImage(load.url) }))
+              ? seo?.images?.map((load) => ({ url: load.url }))
               : [
                   {
                     url: `${getDomain()}/images/android-chrome-192x192.png`,

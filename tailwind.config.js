@@ -5,7 +5,7 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: { ...colors },
+      colors: { ...colors, 'main-1': '#fff', 'main-2': '#e8a516', 'main-3': '#000' },
       height: {
         inherit: 'inherit',
       },
