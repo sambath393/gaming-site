@@ -17,8 +17,6 @@ export default async (req, res) => {
 
     const getAdmin = await Telegrams.getAdminFromDb();
 
-    console.log(getAdmin)
-
     getAdmin.map(async (load) => {
       if (file) {
         const imgUrl = await uploadFile(file, filename, fileType, 'telegram');
