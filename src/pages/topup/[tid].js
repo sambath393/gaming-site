@@ -96,7 +96,7 @@ export default function Tid({ title }) {
         data: {
           filename: inputData.filename,
           fileType: inputData.fileType,
-          file: inputData.file,
+          file: '',
           caption,
         },
       });
