@@ -117,7 +117,7 @@ export default function Tid({ title }) {
         main: true,
       }));
 
-      const res = await axios({
+      await axios({
         method: 'POST',
         url: '/api/telegram/send/sendMessage',
         data: {
@@ -126,17 +126,19 @@ export default function Tid({ title }) {
           file: inputData.file,
           caption,
         },
-      }).catch((err) => {
-        console.log(err.response);
-      });
-
-      if (res.data.status === 'ok') {
-        // router.reload();
-        setLoading((el) => ({
-          ...el,
-          main: false,
-        }));
-      }
+      })
+        .then((res) => {
+          if (res.data.status === 'ok') {
+            // router.reload();
+            setLoading((el) => ({
+              ...el,
+              main: false,
+            }));
+          }
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
     }
   };
 
