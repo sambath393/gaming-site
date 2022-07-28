@@ -1,5 +1,6 @@
 import { Telegrams } from '../../../../model';
 import { uploadFile } from '../../../../service/plugin';
+import { middlewareInit } from '../../../../utilities/middleware';
 
 export const config = {
   api: {
@@ -11,6 +12,7 @@ export const config = {
 
 export default async (req, res) => {
   try {
+    await middlewareInit(req, res);
     const { file, caption, filename, fileType } = req.body;
 
     const getAdmin = await Telegrams.getAdminFromDb();
