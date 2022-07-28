@@ -4,7 +4,7 @@ import { uploadFile } from '../../../../service/plugin';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '15mb',
+      sizeLimit: '5mb',
     },
   },
 };
@@ -13,18 +13,13 @@ export default async (req, res) => {
   try {
     const { file, caption, filename, fileType } = req.body;
 
-    // const chatId = '948817302'; // 948817302, 660375103
-
     const getAdmin = await Telegrams.getAdminFromDb();
 
     getAdmin.map(async (load) => {
       if (file !== '') {
         const imgUrl = await uploadFile(file, filename, fileType, 'telegram');
-        await Telegrams.sendImageWithText(load.id, imgUrl);
-      }
-
-      if (caption) {
-        await Telegrams.sendMessage(load.id, caption);
+        console.log(imgUrl);
+        await Telegrams.sendImageWithText(load.id, imgUrl, caption);
       }
     });
 

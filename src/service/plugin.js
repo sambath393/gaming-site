@@ -47,14 +47,14 @@ export const uploadFile = async (file, fileName, fileType, filePath) => {
       return 'Feeds Added Successfully';
     });
 
-  return `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${encodeURIComponent(
-    `${filePath}/${fileName}`
-  )}?alt=media&token=${uuidv4}`;
+  // return `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${encodeURIComponent(
+  //   `${filePath}/${fileName}`
+  // )}?alt=media&token=${uuidv4}`;
 
-  // return files
-  //   .getSignedUrl({
-  //     action: 'read',
-  //     expires: '03-09-2491',
-  //   })
-  //   .then((signedUrls) => signedUrls[0]);
+  return files
+    .getSignedUrl({
+      action: 'read',
+      expires: '03-09-2491',
+    })
+    .then((signedUrls) => signedUrls[0]);
 };

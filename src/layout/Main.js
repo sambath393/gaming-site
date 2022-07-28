@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Layout, Main } from '../components';
+import { Layout, Main, Popup } from '../components';
 
-export const MainLayout = ({ children }) => {
+export const MainLayout = ({ children, loading }) => {
   // State
   const [scrollBtn, setScrollBtn] = useState(false);
 
@@ -18,6 +18,7 @@ export const MainLayout = ({ children }) => {
   return (
     <div className='w-full min-h-screen relative bg-black'>
       <Main.ScrollToTop scrollBtn={scrollBtn} />
+      {loading && <Popup.Loading />}
       <Layout.Navbar />
       <div>{children}</div>
     </div>

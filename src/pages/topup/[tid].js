@@ -6,6 +6,7 @@ import * as imageConversion from 'image-conversion';
 import { Layout, Typography } from '../../components';
 import { paymentDiamonds } from '../../constants/mock';
 import { asCaption } from '../../utilities/format';
+import { MainLayout } from '../../layout';
 
 const SectionPart = ({ children, index, title }) => (
   <Layout.Section className='pt-5'>
@@ -23,9 +24,14 @@ const SectionPart = ({ children, index, title }) => (
 
 export default function Tid({ title }) {
   const router = useRouter();
+
   const [dataSource] = useState(paymentDiamonds);
   const [selectOption, setSelectOption] = useState(paymentDiamonds[0]);
-  const [inputData, setInputData] = useState({
+  const [loading, setLoading] = useState({
+    main: false,
+    file: false,
+  });
+  const resetData = {
     uid: '',
     zoneId: '',
     selectOption,
@@ -33,7 +39,8 @@ export default function Tid({ title }) {
     file: null,
     filename: '',
     fileType: '',
-  });
+  };
+  const [inputData, setInputData] = useState(resetData);
 
   const onHandleChange = (e) => {
     setInputData((el) => ({
@@ -44,7 +51,16 @@ export default function Tid({ title }) {
 
   const onHandleChangeFile = async (e) => {
     const { files } = e.target;
-    const newFile = await imageConversion.compressAccurately(files[0], 150);
+    setLoading((el) => ({
+      ...el,
+      main: true,
+    }));
+    const newFile = await imageConversion.compressAccurately(files[0], {
+      size: 150,
+      accuracy: 0.9,
+      orientation: 2,
+      scale: 0.5,
+    });
     const reader = new FileReader();
     await reader.readAsDataURL(newFile);
     reader.onload = async () => {
@@ -54,20 +70,34 @@ export default function Tid({ title }) {
         fileType: files[0].type,
         file: reader.result,
       }));
+      setLoading((el) => ({
+        ...el,
+        main: false,
+      }));
     };
   };
 
-  const onHandleClick = async () => {
+  const dataValidation = (data) => {
     let error = false;
-    if (inputData.uid.trim() === '') {
+    if (data.uid.trim() === '') {
       error = true;
     }
-    if (inputData.zoneId.trim() === '') {
+    if (data.zoneId.trim() === '') {
       error = true;
     }
-    if (inputData.tel.trim() === '') {
+    if (data.tel.trim() === '') {
       error = true;
     }
+    if (data.file === null) {
+      error = true;
+    } else {
+      error = false;
+    }
+    return error;
+  };
+
+  const onHandleClick = async () => {
+    const error = dataValidation(inputData);
 
     const caption = asCaption(
       inputData.uid,
@@ -80,6 +110,11 @@ export default function Tid({ title }) {
       // eslint-disable-next-line no-alert
       alert('Please fill input!');
     } else {
+      setLoading((el) => ({
+        ...el,
+        main: true,
+      }));
+
       const res = await axios({
         method: 'POST',
         url: '/api/telegram/send/sendMessage',
@@ -93,12 +128,16 @@ export default function Tid({ title }) {
 
       if (res.data.status === 'ok') {
         router.reload();
+        setLoading((el) => ({
+          ...el,
+          main: false,
+        }));
       }
     }
   };
 
   return (
-    <div>
+    <MainLayout loading={loading.main}>
       {/* <Layout.Container level={2}>
         <Topup.TopBanner />
       </Layout.Container> */}
@@ -114,20 +153,34 @@ export default function Tid({ title }) {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-2'>
                 <input
                   id='uid'
-                  type='text'
-                  placeholder='Enter user ID'
+                  type='number'
+                  placeholder='Enter User ID'
                   className='text-xl px-5 py-2 text-black rounded-md'
                   value={inputData.uid}
-                  onChange={onHandleChange}
+                  onChange={(e) => {
+                    if (
+                      parseInt(e.target.value, 10) < 0 ||
+                      parseInt(e.target.value, 10) > 99999999
+                    ) {
+                      return false;
+                    }
+                    return onHandleChange(e);
+                  }}
                 />
                 <input
                   id='zoneId'
-                  type='text'
+                  type='number'
                   placeholder='Zone ID'
                   className='text-xl px-5 py-2 text-black rounded-md'
-                  maxLength={4}
+                  size='20'
+                  maxLength='4'
                   value={inputData.zoneId}
-                  onChange={onHandleChange}
+                  onChange={(e) => {
+                    if (parseInt(e.target.value, 10) < 0 || parseInt(e.target.value, 10) > 9999) {
+                      return false;
+                    }
+                    return onHandleChange(e);
+                  }}
                 />
               </div>
             </SectionPart>
@@ -209,16 +262,16 @@ export default function Tid({ title }) {
           </div>
         </div>
       </Layout.Container>
-    </div>
+    </MainLayout>
   );
 }
 
-// export async function getServerSideProps(context) {
-//   const { tid } = context.query;
-//   return {
-//     props: {
-//       tid,
-//       title: 'Mobile Legend',
-//     }, // will be passed to the page component as props
-//   };
-// }
+export async function getServerSideProps(context) {
+  const { tid } = context.query;
+  return {
+    props: {
+      tid,
+      title: 'Mobile Legend',
+    }, // will be passed to the page component as props
+  };
+}
