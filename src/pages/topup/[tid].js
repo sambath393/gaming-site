@@ -58,7 +58,6 @@ export default function Tid({ title }) {
     const newFile = await imageConversion.compressAccurately(files[0], {
       size: 150,
       accuracy: 0.9,
-      orientation: 2,
       scale: 0.5,
     });
     const reader = new FileReader();
