@@ -51,6 +51,8 @@ export default function Tid({ title }) {
 
   const onHandleChangeFile = async (e) => {
     const { files } = e.target;
+    // eslint-disable-next-line no-console
+    console.log(files);
     setLoading((el) => ({
       ...el,
       main: true,
