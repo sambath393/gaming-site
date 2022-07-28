@@ -4,7 +4,7 @@ import { uploadFile } from '../../../../service/plugin';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '5mb',
+      sizeLimit: '14mb',
     },
   },
 };

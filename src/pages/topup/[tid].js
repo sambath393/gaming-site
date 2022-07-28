@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Image from 'next/image';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -125,6 +126,8 @@ export default function Tid({ title }) {
           file: inputData.file,
           caption,
         },
+      }).catch((err) => {
+        console.log(err.response);
       });
 
       if (res.data.status === 'ok') {
