@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import * as imageConversion from 'image-conversion';
 import { Layout, Typography } from '../../components';
 import { paymentDiamonds } from '../../constants/mock';
@@ -23,7 +23,7 @@ const SectionPart = ({ children, index, title }) => (
 );
 
 export default function Tid({ title }) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const [dataSource] = useState(paymentDiamonds);
   const [selectOption, setSelectOption] = useState(paymentDiamonds[0]);
@@ -127,7 +127,7 @@ export default function Tid({ title }) {
       });
 
       if (res.data.status === 'ok') {
-        router.reload();
+        // router.reload();
         setLoading((el) => ({
           ...el,
           main: false,

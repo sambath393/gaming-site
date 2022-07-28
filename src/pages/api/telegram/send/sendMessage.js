@@ -18,7 +18,6 @@ export default async (req, res) => {
     getAdmin.map(async (load) => {
       if (file !== '') {
         const imgUrl = await uploadFile(file, filename, fileType, 'telegram');
-        console.log(imgUrl);
         await Telegrams.sendImageWithText(load.id, imgUrl, caption);
       }
     });
